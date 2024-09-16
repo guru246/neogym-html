@@ -8,10 +8,11 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #a2c2e2, #f0f9ff); /* Soft gradient background */
+            background: linear-gradient(135deg, #a2c2e2, #f0f9ff); /* Single gradient background */
             margin: 0;
-            height: 100vh;
-            overflow: hidden;
+            height: 100%; /* Ensure body height covers viewport height */
+            overflow: auto; /* Allow page scrolling */
+            font-family: Arial, sans-serif;
         }
         .container {
             background: white;
@@ -20,9 +21,9 @@
             padding: 30px;
             max-width: 500px;
             width: 100%;
-            position: relative;
-            z-index: 1; /* Ensure container is above canvas */
-            margin-top: 2%;
+            position: relative; /* Ensure the container is positioned relative to the page */
+            margin: 3% auto; /* Center container horizontally and add vertical margin */
+            z-index: 1; /* Ensure the container is on top of the canvas */
         }
         .btn-custom {
             background-color: #007bff;
@@ -32,16 +33,16 @@
         .btn-custom:hover {
             background-color: #0056b3;
         }
-        .result {
+        .result, .error {
             display: none;
         }
         #canvas {
-            position: absolute;
+            position: fixed; /* Fixed position to cover the entire viewport */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            z-index: 0; /* Ensure the canvas is behind other content */
         }
     </style>
 </head>
@@ -55,28 +56,51 @@
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" required>
+                <div class="invalid-feedback">Please enter your full name.</div>
             </div>
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email address.</div>
             </div>
             <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+                <div class="invalid-feedback">Please enter a 10-digit phone number.</div>
             </div>
             <div class="form-group">
                 <label for="date">Preferred Date</label>
                 <input type="date" class="form-control" id="date" name="date" required>
+                <div class="invalid-feedback">Please select a preferred date.</div>
             </div>
             <div class="form-group">
                 <label for="time">Preferred Time</label>
                 <input type="time" class="form-control" id="time" name="time" required>
+                <div class="invalid-feedback">Please select a preferred time.</div>
+            </div>
+            <div class="form-group">
+                <label for="problem">Problem</label>
+                <input type="text" class="form-control" id="problem" name="problem" required>
+                <div class="invalid-feedback">Please describe the problem.</div>
+            </div>
+            <div class="form-group">
+                <label for="symptoms">Symptoms</label>
+                <textarea class="form-control" id="symptoms" name="symptoms" rows="3" required></textarea>
+                <div class="invalid-feedback">Please describe your symptoms.</div>
+            </div>
+            <div class="form-group">
+                <label for="lastVisit">Last Visit Date</label>
+                <input type="date" class="form-control" id="lastVisit" name="lastVisit" required>
+                <div class="invalid-feedback">Please select the last visit date.</div>
             </div>
             <button type="button" class="btn btn-custom btn-block" onclick="bookAppointment()">Book Appointment</button>
         </form>
         
         <div class="result mt-4 alert alert-success" id="result">
             <p>Your appointment has been booked for <span id="appointmentTime"></span>.</p>
+        </div>
+        <div class="error mt-4 alert alert-danger" id="error">
+            <p>You already have an appointment booked.</p>
         </div>
     </div>
 
@@ -91,8 +115,13 @@
         const ctx = canvas.getContext('2d');
         const particles = [];
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Initialize canvas size
 
         function Particle(x, y) {
             this.x = x;
@@ -150,15 +179,38 @@
         }
 
         function bookAppointment() {
-            if (document.getElementById('bookingForm').checkValidity()) {
-                const appointmentTime = getRandomTime();
+            const form = document.getElementById('bookingForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const email = document.getElementById('email').value;
+            const appointmentDate = document.getElementById('date').value;
+            const appointmentTime = getRandomTime();
+            const userKey = `${email}-${appointmentDate}`; // Unique key for each user's booking
+
+            const existingBooking = localStorage.getItem(userKey);
+
+            if (existingBooking) {
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            } else {
+                localStorage.setItem(userKey, JSON.stringify({
+                    time: appointmentTime,
+                    problem: document.getElementById('problem').value,
+                    symptoms: document.getElementById('symptoms').value,
+                    lastVisit: document.getElementById('lastVisit').value
+                }));
+                
                 document.getElementById('appointmentTime').innerText = appointmentTime;
                 document.getElementById('result').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
                 document.getElementById('bookingForm').reset(); // Reset the form fields
-            } else {
-                document.getElementById('bookingForm').reportValidity();
             }
         }
     </script>
+
 </body>
 </html>
+    
