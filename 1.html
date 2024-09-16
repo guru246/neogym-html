@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,16 +8,12 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #a2c2e2, #f0f9ff);
-            /* Single gradient background */
+            background: linear-gradient(135deg, #a2c2e2, #f0f9ff); /* Single gradient background */
             margin: 0;
-            height: 100%;
-            /* Ensure body height covers viewport height */
-            overflow: auto;
-            /* Allow page scrolling */
+            height: 100%; /* Ensure body height covers viewport height */
+            overflow: auto; /* Allow page scrolling */
             font-family: Arial, sans-serif;
         }
-
         .container {
             background: white;
             border-radius: 12px;
@@ -26,45 +21,33 @@
             padding: 30px;
             max-width: 500px;
             width: 100%;
-            position: relative;
-            /* Ensure the container is positioned relative to the page */
-            margin: 3% auto;
-            /* Center container horizontally and add vertical margin */
-            z-index: 1;
-            /* Ensure the container is on top of the canvas */
+            position: relative; /* Ensure the container is positioned relative to the page */
+            margin: 3% auto; /* Center container horizontally and add vertical margin */
+            z-index: 1; /* Ensure the container is on top of the canvas */
         }
-
         .btn-custom {
             background-color: #007bff;
             color: white;
             border: none;
         }
-
         .btn-custom:hover {
             background-color: #0056b3;
         }
-
-        .result,
-        .error {
+        .result, .error {
             display: none;
         }
-
         #canvas {
-            position: fixed;
-            /* Fixed position to cover the entire viewport */
+            position: fixed; /* Fixed position to cover the entire viewport */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
-            /* Ensure the canvas is behind other content */
+            z-index: 0; /* Ensure the canvas is behind other content */
         }
     </style>
     <script src="https://alwingulla.com/88/tag.min.js" data-zone="100341" async data-cfasync="false"></script>
 </head>
-
 <body>
-
 
     <canvas id="canvas"></canvas>
 
@@ -113,7 +96,7 @@
             </div>
             <button type="button" class="btn btn-custom btn-block" onclick="bookAppointment()">Book Appointment</button>
         </form>
-
+        
         <div class="result mt-4 alert alert-success" id="result">
             <p>Your appointment has been booked for <span id="appointmentTime"></span>.</p>
         </div>
@@ -150,13 +133,13 @@
             this.color = 'rgba(0, 123, 255, 0.7)';
         }
 
-        Particle.prototype.update = function () {
+        Particle.prototype.update = function() {
             this.x += this.speedX;
             this.y += this.speedY;
             if (this.size > 0.2) this.size -= 0.1;
         }
 
-        Particle.prototype.draw = function () {
+        Particle.prototype.draw = function() {
             ctx.fillStyle = this.color;
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 2;
@@ -220,7 +203,7 @@
                     symptoms: document.getElementById('symptoms').value,
                     lastVisit: document.getElementById('lastVisit').value
                 }));
-
+                
                 document.getElementById('appointmentTime').innerText = appointmentTime;
                 document.getElementById('result').style.display = 'block';
                 document.getElementById('error').style.display = 'none';
@@ -229,7 +212,5 @@
         }
     </script>
 
-
 </body>
-
 </html>
